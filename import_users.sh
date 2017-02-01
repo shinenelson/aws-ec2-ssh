@@ -7,7 +7,7 @@ aws iam list-users --query "Users[].[UserName]" --output text | while read User;
   SaveUserName=${SaveUserName//","/".comma."}
   SaveUserName=${SaveUserName//"@"/".at."}
 
-  [ ! grep "$SaveUserName" /etc/passwd > /dev/null ] && /usr/sbin/useradd "$SaveUserName"
+  [ ! $(grep "$SaveUserName" /etc/passwd > /dev/null) ] && /usr/sbin/useradd "$SaveUserName"
 
     # sudo will read each file in /etc/sudoers.d,
     # skipping file names that end in ‘~’ or contain a ‘.’ character
