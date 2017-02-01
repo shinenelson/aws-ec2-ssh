@@ -6,8 +6,8 @@ aws iam list-users --query "Users[].[UserName]" --output text | while read User;
   SaveUserName=${SaveUserName//"="/".equal."}
   SaveUserName=${SaveUserName//","/".comma."}
   SaveUserName=${SaveUserName//"@"/".at."}
-  if ! grep "$SaveUserName" /etc/passwd > /dev/null; then
-    /usr/sbin/useradd "$SaveUserName"
+
+  [ ! grep "$SaveUserName" /etc/passwd > /dev/null ] && /usr/sbin/useradd "$SaveUserName"
 
     # sudo will read each file in /etc/sudoers.d,
     # skipping file names that end in ‘~’ or contain a ‘.’ character
@@ -16,5 +16,5 @@ aws iam list-users --query "Users[].[UserName]" --output text | while read User;
 
     # SaveUserFileName=$(echo "$SaveUserName" | tr "." " ")
     # echo "$SaveUserName ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/$SaveUserFileName"
-  fi
+#   fi
 done
