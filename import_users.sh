@@ -6,9 +6,7 @@ aws iam list-users --query "Users[].[UserName]" --output text | while read User;
   SaveUserName=${SaveUserName//"="/".equal."}
   SaveUserName=${SaveUserName//","/".comma."}
   SaveUserName=${SaveUserName//"@"/".at."}
-  if grep "$SaveUserName" /etc/passwd > /dev/null; then
-    echo "$SaveUserName exists"
-  else
+  if ! grep "$SaveUserName" /etc/passwd > /dev/null; then
     /usr/sbin/useradd "$SaveUserName"
 
     # sudo will read each file in /etc/sudoers.d,
