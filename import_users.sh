@@ -6,7 +6,7 @@ aws iam list-users --query "Users[].[UserName]" --output text | while read User;
   SaveUserName=${SaveUserName//"="/".equal."}
   SaveUserName=${SaveUserName//","/".comma."}
   SaveUserName=${SaveUserName//"@"/".at."}
-  if id -u "$SaveUserName" >/dev/null 2>&1; then
+  if grep "$SaveUserName" /etc/passwd > /dev/null; then
     echo "$SaveUserName exists"
   else
     /usr/sbin/useradd "$SaveUserName"
