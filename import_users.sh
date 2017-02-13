@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Specify IAM group(s) separated by spaces to import users.
+# Leave it blank or specify "##ALL##" (including the double quotes) to import all users
+ImportGroup=()
+for IAMGroup in ${ImportGroup[@]}; do
+  if [ -n "${IAMGroup}" ] && [ "${IAMGroup}" != "##ALL##" ]; then
+    Users+=$( aws iam get-group --group-name "${IAMGroup}" --query "Users[].[UserName]" --output text )
+    Users+=" "
+  elif [ -z "${IAMGroup}" ] || [ "${IAMGroup}" == "##ALL##" ]; then
+    Users=$( aws iam list-users --query "Users[].[UserName]" --output text )
+  fi
+done
+
 # Specify an IAM group for users who should be given sudo privileges, or leave
 # empty to not change sudo access, or give it the value '##ALL##' to have all
 # users be given sudo rights.
@@ -8,7 +20,7 @@ SudoersGroup=""
   aws iam get-group --group-name "${SudoersGroup}" --query "Users[].[UserName]" --output text
 );
 
-aws iam list-users --query "Users[].[UserName]" --output text | while read User; do
+for User in ${Users[@]}; do
   SaveUserName="$User"
   SaveUserName=${SaveUserName//"+"/".plus."}
   SaveUserName=${SaveUserName//"="/".equal."}

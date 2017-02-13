@@ -103,7 +103,19 @@ Resources:
               content: |
                 #!/bin/bash
 
-                aws iam list-users --query "Users[].[UserName]" --output text | while read User; do
+                # Specify IAM group(s) separated by spaces to import users.
+                # Leave it blank or specify "##ALL##" (including the double quotes) to import all users
+                ImportGroup=()
+                for IAMGroup in ${ImportGroup[@]}; do
+                  if [ -n "${IAMGroup}" ] && [ "${IAMGroup}" != "##ALL##" ]; then
+                    Users+=$( aws iam get-group --group-name "${IAMGroup}" --query "Users[].[UserName]" --output text )
+                    Users+=" "
+                  elif [ -z "${IAMGroup}" ] || [ "${IAMGroup}" == "##ALL##" ]; then
+                    Users=$( aws iam list-users --query "Users[].[UserName]" --output text )
+                  fi
+                done
+
+                for User in ${Users[@]}; do
                   SaveUserName="$User"
                   SaveUserName=${SaveUserName//"+"/".plus."}
                   SaveUserName=${SaveUserName//"="/".equal."}
