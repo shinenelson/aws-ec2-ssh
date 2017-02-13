@@ -15,8 +15,8 @@ cp import_users.sh /opt/import_users.sh
 
 # Specify IAM group(s) separated by spaces to import users.
 # Replace <IAMGroups> with the groups to import separated by spaces
-# Leave it blank or specify "##ALL##" (including the double quotes) to import all users
-# sudo sed -i 's/ImportGroup=()/ImportGroup=(<IAMGroups>)/' /opt/import_users.sh
+# Specify "##ALL##" (including the double quotes) to import all users
+# sudo sed -i 's/ImportGroup=("##ALL##")/ImportGroup=(<IAMGroups>)/' /opt/import_users.sh
 
 # To control which users are given sudo privileges, uncomment the line below
 # changing GROUPNAME to either the name of the IAM group for sudo users, or

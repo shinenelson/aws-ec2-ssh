@@ -1,13 +1,16 @@
 #!/bin/bash
 
 # Specify IAM group(s) separated by spaces to import users.
-# Leave it blank or specify "##ALL##" (including the double quotes) to import all users
-ImportGroup=()
+# Specify "##ALL##" (including the double quotes) to import all users
+ImportGroup=("##ALL##")
+
+[ -z "$ImportGroup" ] && ImportGroup="##ALL##"		# Check for empty ImportGroup
+
 for IAMGroup in ${ImportGroup[@]}; do
   if [ -n "${IAMGroup}" ] && [ "${IAMGroup}" != "##ALL##" ]; then
     Users+=$( aws iam get-group --group-name "${IAMGroup}" --query "Users[].[UserName]" --output text )
     Users+=" "
-  elif [ -z "${IAMGroup}" ] || [ "${IAMGroup}" == "##ALL##" ]; then
+  elif [ "${IAMGroup}" == "##ALL##" ]; then
     Users=$( aws iam list-users --query "Users[].[UserName]" --output text )
   fi
 done
